@@ -5,91 +5,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
-  <body onload="start()">
+  <body>
   <canvas id="glCanvas" width="800" height="600">
     Your browser doesn't appear to support the 
     <code>&lt;canvas&gt;</code> element.
   </canvas>
   </body>
-  <script>
-    function start () {
-
-      var canvas = document.getElementById('glCanvas');
-      // Try to grab the standard context. If it fails
-      //fallback to experimental,because browsers ¯\_(ツ)_/¯
-      gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl')
-      // Only continue if WebGL is available and working
-      if (!gl) {
-        return
-      }
-
-      // Set clear color to black, fully opaque
-      gl.clearColor(0.0, 0.0, 0.0, 1.0)
-      // Enable depth testing
-      gl.enable(gl.DEPTH_TEST)
-      // Near things obscure far things
-      gl.depthFunc(gl.LEQUAL)
-      // Clear the color as well as the depth buffer.
-      gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
-      // This is a very important step, most of the webgl newbies miss this
-      // (x, y, width, height)
-      gl.viewport(0, 0, canvas.width, canvas.height)
-
-      var vsSrc = `
-        attribute vec3 aVertexPosition;
-        void main(void) {
-          gl_Position = vec4(aVertexPosition, 1.0);
-        }
-      `
-      var fsSrc = `
-        void main(void) {
-          gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
-        }
-      `
-      var vShader = gl.createShader(gl.VERTEX_SHADER)
-      gl.shaderSource(vShader, vsSrc)
-      gl.compileShader(vShader)
-      // Same for the fragment shader
-      var fShader = gl.createShader(gl.FRAGMENT_SHADER)
-      gl.shaderSource(fShader, fsSrc)
-      gl.compileShader(fShader)
-
-      var program = gl.createProgram()
-      gl.attachShader(program, vShader)
-      gl.attachShader(program, fShader)
-      gl.linkProgram(program)
-
-      //
-      // Create buffer
-      //
-      var triangleVertices = 
-      [ // X, Y, Z
-        0.0, 0.5, 0.0,
-        -0.5, -0.5, 0.0,
-        0.5, -0.5, 0.0
-      ];
-
-      var triangleVertexBufferObject = gl.createBuffer();
-      gl.bindBuffer(gl.ARRAY_BUFFER, triangleVertexBufferObject);
-      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(triangleVertices), gl.STATIC_DRAW);
-
-      var positionAttribLocation = gl.getAttribLocation(program, 'aVertexPosition');
-      gl.vertexAttribPointer(
-        positionAttribLocation, // Attribute location
-        3, // Number of elements per attribute
-        gl.FLOAT, // Type of elements
-        gl.FALSE,
-        3 * Float32Array.BYTES_PER_ELEMENT, // Size of an individual vertex
-        0 // Offset from the beginning of a single vertex to this attribute
-      );
-
-      gl.enableVertexAttribArray(positionAttribLocation);
-
-      //
-      // Main render loop
-      //
-      gl.useProgram(program);
-      gl.drawArrays(gl.TRIANGLES, 0, 3)
-    }
-  </script>
+  <script src="app.js"></script>
 </html>
