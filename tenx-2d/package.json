@@ -1,0 +1,23 @@
+{
+  "name": "tenx-2d",
+  "version": "0.0.1",
+  "description": "TENx2D is the name of the game engine that is created for the internal Contentful talk",
+  "main": "index.js",
+  "directories": {
+    "example": "example"
+  },
+  "scripts": {
+    "build": "NODE_ENV=production webpack"
+  },
+  "keywords": [],
+  "author": "Khaled Garbaya <khaledgarbaya@gmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "babel": "^6.23.0",
+    "babel-core": "^6.24.0",
+    "babel-loader": "^6.4.1",
+    "babel-preset-es2015": "^6.24.0",
+    "babel-preset-stage-0": "^6.22.0",
+    "webpack": "^2.3.3"
+  }
+}
