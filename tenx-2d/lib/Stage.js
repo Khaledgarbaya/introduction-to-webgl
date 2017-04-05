@@ -14,7 +14,10 @@ export default class Stage {
   }
 
   removeChild (child) {
-    this.children.slice()
+    var i = this.children.indexOf(child)
+    if (i !== -1) {
+      this.children.splice(i, 1)
+    }
   }
 
 }

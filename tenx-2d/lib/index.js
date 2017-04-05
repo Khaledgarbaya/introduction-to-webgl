@@ -1,4 +1,4 @@
 module.exports = {
-  Stage: require('./Stage'),
-  Sprite: require('./Sprite')
+  Stage: require('./Stage').default,
+  Sprite: require('./Sprite').default
 }

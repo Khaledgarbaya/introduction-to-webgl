@@ -11,5 +11,22 @@
     <code>&lt;canvas&gt;</code> element.
   </canvas>
   </body>
-  <script src="app.js"></script>
+  <script src="../dist/tenx2d.min.js"></script>
+  <script>
+      var stage = new tenx2d.Stage(document.getElementById('glCanvas'))
+      var img = new Image()
+      var sprite = null
+      img.onload = function () {
+        sprite = new tenx2d.Sprite(stage.gl, img)
+        stage.addChild(sprite)
+        requestAnimationFrame(render)
+      }
+      img.src = 'contentful.png'
+      window.sprite = sprite
+
+      function render () {
+          stage.render()
+          requestAnimationFrame(render)
+      }
+  </script>
 </html>

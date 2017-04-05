@@ -1,5 +1,8 @@
 function start () {
-  var canvas = document.getElementById('glCanvas');
+  // ==============================================
+  // 1. Request Context
+  // ==============================================
+  var canvas = document.getElementById('glCanvas')
   // Try to grab the standard context. If it fails
   // fallback to experimental,because browsers ¯\_(ツ)_/¯
   const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl')
@@ -7,7 +10,9 @@ function start () {
   if (!gl) {
     return
   }
-
+  // ==============================================
+  // 2. Configure Context
+  // ==============================================
   // Set clear color to black, fully opaque
   gl.clearColor(0.0, 0.0, 0.0, 1.0)
   // Enable depth testing
@@ -18,8 +23,10 @@ function start () {
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
   // This is a very important step, most of the webgl newbies miss this
   // (x, y, width, height)
-  gl.viewport(0, 0, canvas.width, canvas.height)
-
+  gl.viewport(0, 0, canvas.width, canvas.height) 
+  // ==============================================
+  // 3. Create Shaders & link Program
+  // ==============================================
   var vsSrc = `
     attribute vec3 aVertexPosition;
     void main(void) {
@@ -44,9 +51,9 @@ function start () {
   gl.attachShader(program, fShader)
   gl.linkProgram(program)
 
-  //
-  // Create buffer
-  //
+  // ==============================================
+  // 4. Create Buffer
+  // ==============================================
   var triangleVertices = [
     // X, Y, Z
     0.0, 0.5, 0.0,
@@ -70,9 +77,9 @@ function start () {
 
   gl.enableVertexAttribArray(positionAttribLocation)
 
-  //
-  // Main render loop
-  //
+  // ==============================================
+  // 5. Draw
+  // ==============================================
   gl.useProgram(program)
   gl.drawArrays(gl.TRIANGLES, 0, 3)
 }
