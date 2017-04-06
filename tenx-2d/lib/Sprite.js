@@ -41,25 +41,25 @@ export default class Sprite {
     this.y = 0
     this.width = width
     this.height = height
+    this.init()
   }
-
-  render () {
-    const program = this.createProgram(vertexShaderSrc, fragmentShaderSrc)
+  init () {
+    this.program = this.createProgram(vertexShaderSrc, fragmentShaderSrc)
     // look up where the vertex data needs to go.
-    var positionLocation = this.gl.getAttribLocation(program, 'a_position')
-    var texcoordLocation = this.gl.getAttribLocation(program, 'a_texCoord')
+    this.positionLocation = this.gl.getAttribLocation(this.program, 'a_position')
+    this.texcoordLocation = this.gl.getAttribLocation(this.program, 'a_texCoord')
 
     // Create a buffer to put three 2d clip space points in
-    var positionBuffer = this.gl.createBuffer()
+    this.positionBuffer = this.gl.createBuffer()
 
     // Bind it to ARRAY_BUFFER (think of it as ARRAY_BUFFER = positionBuffer)
-    this.gl.bindBuffer(this.gl.ARRAY_BUFFER, positionBuffer)
+    this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.positionBuffer)
     // Set a rectangle the same size as the image.
     this.setRectangle(this.gl, this.x, this.y, this.width, this.height)
 
     // provide texture coordinates for the rectangle.
-    var texcoordBuffer = this.gl.createBuffer()
-    this.gl.bindBuffer(this.gl.ARRAY_BUFFER, texcoordBuffer)
+    this.texcoordBuffer = this.gl.createBuffer()
+    this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.texcoordBuffer)
     this.gl.bufferData(this.gl.ARRAY_BUFFER, new Float32Array([
       0.0, 0.0,
       1.0, 0.0,
@@ -70,8 +70,8 @@ export default class Sprite {
     ]), this.gl.STATIC_DRAW)
 
     // Create a texture.
-    var texture = this.gl.createTexture()
-    this.gl.bindTexture(this.gl.TEXTURE_2D, texture)
+    this.texture = this.gl.createTexture()
+    this.gl.bindTexture(this.gl.TEXTURE_2D, this.texture)
 
     // Set the parameters so we can render any size image.
     this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_WRAP_S, this.gl.CLAMP_TO_EDGE)
@@ -83,23 +83,29 @@ export default class Sprite {
     this.gl.texImage2D(this.gl.TEXTURE_2D, 0, this.gl.RGBA, this.gl.RGBA, this.gl.UNSIGNED_BYTE, this.image)
 
     // lookup uniforms
-    var resolutionLocation = this.gl.getUniformLocation(program, 'u_resolution')
+    this.resolutionLocation = this.gl.getUniformLocation(this.program, 'u_resolution')
 
     // Tell WebGL how to convert from clip space to pixels
     this.gl.viewport(0, 0, this.gl.canvas.width, this.gl.canvas.height)
+  }
 
+  render () {
     // Clear the canvas
     this.gl.clearColor(0, 0, 0, 0)
     this.gl.clear(this.gl.COLOR_BUFFER_BIT)
+    // Bind it to ARRAY_BUFFER (think of it as ARRAY_BUFFER = positionBuffer)
+    this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.positionBuffer)
+    // Set a rectangle the same size as the image.
+    this.setRectangle(this.gl, this.x, this.y, this.width, this.height)
 
     // Tell it to use our program (pair of shaders)
-    this.gl.useProgram(program)
+    this.gl.useProgram(this.program)
 
     // Turn on the position attribute
-    this.gl.enableVertexAttribArray(positionLocation)
+    this.gl.enableVertexAttribArray(this.positionLocation)
 
     // Bind the position buffer.
-    this.gl.bindBuffer(this.gl.ARRAY_BUFFER, positionBuffer)
+    this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.positionBuffer)
 
     // Tell the position attribute how to get data out of positionBuffer (ARRAY_BUFFER)
     var size = 2          // 2 components per iteration
@@ -107,26 +113,31 @@ export default class Sprite {
     var normalize = false // don't normalize the data
     var stride = 0        // 0 = move forward size * sizeof(type) each iteration to get the next position
     var offset = 0        // start at the beginning of the buffer
-    this.gl.vertexAttribPointer(
-        positionLocation, size, type, normalize, stride, offset)
+    this.gl.vertexAttribPointer(this.positionLocation, size, type, normalize, stride, offset)
 
     // Turn on the teccord attribute
-    this.gl.enableVertexAttribArray(texcoordLocation)
+    this.gl.enableVertexAttribArray(this.texcoordLocation)
 
     // Bind the position buffer.
-    this.gl.bindBuffer(this.gl.ARRAY_BUFFER, texcoordBuffer)
-
+    this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.texcoordBuffer)
+    this.gl.bufferData(this.gl.ARRAY_BUFFER, new Float32Array([
+      0.0, 0.0,
+      1.0, 0.0,
+      0.0, 1.0,
+      0.0, 1.0,
+      1.0, 0.0,
+      1.0, 1.0
+    ]), this.gl.STATIC_DRAW)
     // Tell the position attribute how to get data out of positionBuffer (ARRAY_BUFFER)
     size = 2          // 2 components per iteration
     type = this.gl.FLOAT   // the data is 32bit floats
     normalize = false // don't normalize the data
     stride = 0       // 0 = move forward size * sizeof(type) each iteration to get the next position
     offset = 0       // start at the beginning of the buffer
-    this.gl.vertexAttribPointer(
-        texcoordLocation, size, type, normalize, stride, offset)
+    this.gl.vertexAttribPointer(this.texcoordLocation, size, type, normalize, stride, offset)
 
     // set the resolution
-    this.gl.uniform2f(resolutionLocation, this.gl.canvas.width, this.gl.canvas.height)
+    this.gl.uniform2f(this.resolutionLocation, this.gl.canvas.width, this.gl.canvas.height)
 
     // Draw the rectangle.
     var primitiveType = this.gl.TRIANGLES

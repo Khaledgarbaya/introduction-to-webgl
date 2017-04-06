@@ -23,7 +23,7 @@ function start () {
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
   // This is a very important step, most of the webgl newbies miss this
   // (x, y, width, height)
-  gl.viewport(0, 0, canvas.width, canvas.height) 
+  gl.viewport(0, 0, canvas.width, canvas.height)
   // ==============================================
   // 3. Create Shaders & link Program
   // ==============================================
